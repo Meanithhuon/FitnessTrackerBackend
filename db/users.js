@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 
 // database functions
 
-// user functions
+
+
 async function createUser({ username, password }) {
   const SALT_COUNT = 10;
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
@@ -15,17 +16,19 @@ async function createUser({ username, password }) {
       INSERT INTO users(username, password) 
       VALUES($1, $2) 
       ON CONFLICT (username) DO NOTHING
-      RETURNING  *;
+      RETURNING id, username;
     `,
       [username, hashedPassword]
     );
     return user;
   } catch (error) {
-    console.log(error)
+    if (error.message.includes("UNIQUE constraint failed")) {
+      throw new Error("Username already exists");
+    }
+    console.error(error);
     throw error;
   }
 }
-
 
 
 
@@ -53,11 +56,39 @@ async function getUser({ username, password }) {
 
 
 async function getUserById(userId) {
+  
+  try{
+   const {rows:[user] } = await client.query(`
+   SELECT id, username
+   FROM users
+   WHERE id=$1
+   `,[userId]);
+   return user;
+  }catch(error){
+   console.error(error);
+   throw error;
+   }
+ }
+ 
 
-}
-
-async function getUserByUsername(userName) {
-
+ async function getUserByUsername(username) {
+  
+  try{
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT *
+      FROM users
+      WHERE username=$1;
+    `,
+      [username]
+    );
+    return user;
+    }catch(error){
+      console.error(error);
+      throw error;
+      }
 }
 
 module.exports = {
