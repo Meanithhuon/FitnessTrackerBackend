@@ -96,7 +96,7 @@ describe("DB Users", () => {
   });
 
   describe("getUserById", () => {
-    xit("Gets a user based on the user Id", async () => {
+    it("Gets a user based on the user Id", async () => {
       const fakeUser = await createFakeUser("Jacob");
       const user = await getUserById(fakeUser.id);
       expect(user).toBeTruthy();
