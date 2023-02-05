@@ -40,22 +40,18 @@ async function getAllActivities() {
 }
 
 
-async function getActivityById(id) {
 
-  try{
-  const { rows  } = await client.query(`
-  SELECT *
-  FROM activities
-  WHERE id=$1;
-`, [id]);
-return rows[0];
-  }catch(error) {
+async function getActivityById(id) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(`SELECT * FROM activities WHERE id=$1;`, [id]);
+    return activity;
+  } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
-
-
 
 async function getActivityByName(name) {
   try{

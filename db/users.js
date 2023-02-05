@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 async function createUser({ username, password }) {
   const SALT_COUNT = 10;
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+  let userToAdd = {username, hashedPassword};
   try {
     const {
       rows: [user],
@@ -18,11 +19,11 @@ async function createUser({ username, password }) {
       ON CONFLICT (username) DO NOTHING
       RETURNING id, username;
     `,
-      [username, hashedPassword]
+      [userToAdd.username, userToAdd.hashedPassword]
     );
     return user;
   } catch (error) {
-    if (error.message.includes("UNIQUE constraint failed")) {
+    if (error.message.toLowerCase().includes("unique") || error.message.toLowerCase().includes("constraint") || error.message.toLowerCase().includes("failed")) {
       throw new Error("Username already exists");
     }
     console.error(error);
@@ -37,12 +38,12 @@ async function getUser({ username, password }) {
   try {
     const user = await getUserByUsername(username);
     const hashedPassword = user.password;
-    const validPassword = await bcrypt.compare(password, hashedPassword);
-    if (validPassword) {
+    let passwordsMatch = await bcrypt.compare(password, hashedPassword);
+    if (passwordsMatch) {
       delete user.password;
       return user;
     } 
-    else if(!validPassword) {
+    else if(!passwordsMatch) {
       return ;
     }
     else {

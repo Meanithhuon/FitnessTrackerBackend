@@ -1,18 +1,7 @@
 const client = require("./client");
 const { attachActivitiesToRoutines } = require("./activities");
 
-async function createRoutine({ creatorId, isPublic, name, goal }) {
-    const {
-      rows: [routine],
-    } = await client.query(
-      `
-      INSERT INTO routines ("creatorId", "isPublic", name, goal)
-      VALUES($1, $2, $3, $4)
-      RETURNING *;`,
-      [creatorId, isPublic, name, goal]
-    );
-    return routine;
-}
+
 
 async function getRoutineById(id) {
   try {
@@ -24,6 +13,8 @@ async function getRoutineById(id) {
     console.error(error);
   }
 }
+
+
 
 async function getRoutinesWithoutActivities() {
   
@@ -109,7 +100,19 @@ async function getAllRoutines() {
       
     }
 
-
+    async function createRoutine({ creatorId, isPublic, name, goal }) {
+      const {
+        rows: [routine],
+      } = await client.query(
+        `
+        INSERT INTO routines ("creatorId", "isPublic", name, goal)
+        VALUES($1, $2, $3, $4)
+        RETURNING *;`,
+        [creatorId, isPublic, name, goal]
+      );
+      return routine;
+  }
+  
     async function updateRoutine({ id, ...fields }) {
       const setValue = Object.keys(fields)
       .map((key, index) => `"${key}"=$${index + 1}`)

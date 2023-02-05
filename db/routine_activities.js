@@ -34,26 +34,14 @@ async function getRoutineActivityById(id) {
   }
   }
 
-  async function getRoutineActivitiesByRoutine({ id }) {
-    try {
-      const { rows } = await client.query(`
-        SELECT *
-        FROM routine_activities
-        WHERE "routineId"= ${id}
-      `);
-      return rows;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+
 
 
   async function updateRoutineActivity({ id, ...fields }) {
-    const setString = Object.keys(fields)
+    const setValue = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
-    if (setString.length === 0) {
+    if (setValue.length === 0) {
       return;
     }
    try{ 
@@ -61,7 +49,7 @@ async function getRoutineActivityById(id) {
       await client.query(
         `
         UPDATE routine_activities
-        SET ${setString}
+        SET ${setValue}
         WHERE id=${id}
         RETURNING *;
       `,
@@ -88,6 +76,20 @@ async function getRoutineActivityById(id) {
         [id]
       );
       return routine_activity;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async function getRoutineActivitiesByRoutine({ id }) {
+    try {
+      const { rows } = await client.query(`
+        SELECT *
+        FROM routine_activities
+        WHERE "routineId"= ${id}
+      `);
+      return rows;
     } catch (error) {
       console.error(error);
       throw error;
