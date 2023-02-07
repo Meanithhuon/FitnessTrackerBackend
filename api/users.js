@@ -1,12 +1,14 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
 const router = express.Router();
-const { requireUser, authenticateToken } = require("./utils");
+const {requireUser} = require("./utils");
 
 const jwt = require("jsonwebtoken");
 
+const{UserTakenError, PasswordTooShortError, UnauthorizedError} = require ("../errors")
+
 const {
-    getUserByUsername, createUser, getUser, getPublicRoutinesByUser,getAllRoutinesByUser,
+  getUserByUsername, createUser, getUser, getPublicRoutinesByUser,getAllRoutinesByUser,
 
 } = require("../db");
 
@@ -18,14 +20,19 @@ router.post("/register", async (req, res, next) => {
     const _user = await getUserByUsername(username);
 
     if (_user) {
-      throw new Error(`User ${username} already exists.`);
+
+      const error = new Error(UserTakenError);
+      error.name = UserTakenError
+      error.message = `User ${username} is already exist.`;
+      throw error;
+     
     }
 
     if (password.length < 8) {
       next({
         message: "Password Too Short!",
-        name: `PasswordFormatError`,
-        error: 'Error'
+        name: PasswordTooShortError,
+        error: PasswordTooShortError,
       });
     }
 
@@ -83,27 +90,40 @@ router.post("/login", async (req, res, next) => {
 
 // GET /api/users/me
 
+// router.get("/me", requireUser, async (req, res, next) => {
+//   try {
+//     if (req.user) {
+//       res.send(req.user);
+//     } 
+//     next({
+//       name: UnauthorizedError,
+//       message:"UnauthorizedError",
+//       error:UnauthorizedError,
+
+
+//     });
 
 
 
-
-router.get("/me", authenticateToken, requireUser, async (req, res, next) => {
+router.get("/me", requireUser, async (req, res, next) => {
   try {
-    console.log(req.user);
     if (req.user) {
       res.send(req.user);
     } else {
-      res.status(401).send({
-        error: "Unauthorized",
-        name: "UnauthorizedError",
+      next({
+        error: UnauthorizedError,
+        name: UnauthorizedError,
         message: "You must be logged in to perform this action",
       });
     }
   } catch (err) {
     console.log(err.message);
-    next(err);
+    next();
   }
 });
+
+
+
 
 router.get("/:username/routines", async (req, res, next) => {
  

@@ -1,3 +1,5 @@
+
+
 const client = require('./client');
 
 // database functions
@@ -20,9 +22,18 @@ async function createActivity({ name, description }) {
     return rows[0];
   }catch(error) {
     console.error(error);
-    throw error
+    throw { message: error.message, name: error.name, error };
   }
 }
+
+
+
+
+
+
+
+
+
 
  // select and return an array of all activities
 
