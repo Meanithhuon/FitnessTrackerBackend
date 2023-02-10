@@ -23,11 +23,7 @@ async function dropTables() {
     throw error
   }
 }
-
-
-
   // create all tables, in the correct order
-
 
 async function createTables() {
   try {

@@ -23,11 +23,6 @@ router.use(async (req, res, next) => {
       if (id) {
         req.user = await getUserById(id);
         next();
-      } else {
-        next({
-          name: 'AuthorizationHeaderError',
-          message: 'Authorization token malformed',
-        });
       }
     } catch ({ name, message }) {
       next({ name, message });
@@ -79,4 +74,51 @@ router.use('/routines', routinesRouter);
 const routineActivitiesRouter = require('./routineActivities');
 router.use('/routine_activities', routineActivitiesRouter);
 
+router.use('*', (req, res, next) => {
+  res.status(404)
+  res.send({
+    message: "Not Found"
+  })
+
+})
+
+router.use((error, req, res, next) => {
+if (error == 'Unauthorized'){
+  res.status(401)
+}
+  res.send({
+    error: error.name,
+    name: error.name,
+    message: error.message
+  });
+});
+
+router.use((error, req, res, next) => {
+  if (error.code === 409) {
+    res.status(409).send({
+      error: "Conflict",
+      message: error.message
+    });
+  } else {
+    next(error);
+  }
+});
+
+router.use((err, req, res) => {
+  const error = {
+    name: err.name,
+    message: err.message,
+    error: err
+  };
+  res.status(500).send(error);
+});
+
+
+router.use((error, req, res, next) => {
+  res.send(error);
+});
+ 
+
 module.exports = router;
+
+

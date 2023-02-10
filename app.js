@@ -18,10 +18,10 @@ app.use("/api", apiRouter);
 const client = require("./db/client");
 client.connect();
 
-app.use('*', (req, res, next) => {
-  res.status(404);
-  res.send({ error: 'route not found' })
-});
+// app.use('*', (req, res, next) => {
+//   res.status(404);
+//   res.send({ error: 'route not found' })
+// });
 
 
 
@@ -32,13 +32,15 @@ app.use('*', (req, res, next) => {
 
 
 
-app.use((err, req, res) => {
-  const error = {
-    name: err.name,
-    message: err.message,
-    error: err
-  };
-  res.status(500).send(error);
-});
+// app.use((err, req, res) => {
+//   const error = {
+//     name: err.name,
+//     message: err.message,
+//     error: err
+//   };
+//   res.status(500).send(error);
+// });
 
 module.exports = app;
+
+

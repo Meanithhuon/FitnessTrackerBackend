@@ -20,19 +20,20 @@ router.post("/register", async (req, res, next) => {
     const _user = await getUserByUsername(username);
 
     if (_user) {
+      next({
 
-      const error = new Error(UserTakenError);
-      error.name = UserTakenError
-      error.message = `User ${username} is already exist.`;
-      throw error;
-     
+      message:`User ${username} is already taken.`,
+      name: UserTakenError(username),
+      error: UserTakenError(username),
+      
+      });
     }
 
     if (password.length < 8) {
       next({
         message: "Password Too Short!",
-        name: PasswordTooShortError,
-        error: PasswordTooShortError,
+        name: PasswordTooShortError(),
+        error: PasswordTooShortError(),
       });
     }
 
@@ -50,8 +51,8 @@ router.post("/register", async (req, res, next) => {
     });
   } catch (error) {
     next({
-      name: error.name,
       message: error.message,
+      name: error.name,
       error: "Error",
     });
   }
@@ -95,6 +96,7 @@ router.post("/login", async (req, res, next) => {
 //     if (req.user) {
 //       res.send(req.user);
 //     } 
+//   }
 //     next({
 //       name: UnauthorizedError,
 //       message:"UnauthorizedError",
@@ -102,27 +104,28 @@ router.post("/login", async (req, res, next) => {
 
 
 //     });
+//   } catch (err) {
+//     //     console.log(err.message);
+//     //     next();
 
+//   })
 
 
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     if (req.user) {
       res.send(req.user);
-    } else {
-      next({
-        error: UnauthorizedError,
-        name: UnauthorizedError,
-        message: "You must be logged in to perform this action",
-      });
-    }
+    } 
   } catch (err) {
     console.log(err.message);
-    next();
+
+    next({
+      error: UnauthorizedError,
+      name: UnauthorizedError,
+      message: "You must be logged in to perform this action",
+    });
   }
 });
-
-
 
 
 router.get("/:username/routines", async (req, res, next) => {
@@ -147,8 +150,6 @@ router.get("/:username/routines", async (req, res, next) => {
   }
 
 })
-
-
 
 
 module.exports = router;

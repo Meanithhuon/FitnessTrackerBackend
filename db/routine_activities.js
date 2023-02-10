@@ -35,8 +35,6 @@ async function getRoutineActivityById(id) {
   }
 
 
-
-
   async function updateRoutineActivity({ id, ...fields }) {
     const setValue = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -61,7 +59,6 @@ async function getRoutineActivityById(id) {
          throw error;
    }
   }
-
 
   async function destroyRoutineActivity(id) {
     try {

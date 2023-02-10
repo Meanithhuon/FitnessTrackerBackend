@@ -1,8 +1,6 @@
 const client = require("./client");
 const { attachActivitiesToRoutines } = require("./activities");
 
-
-
 async function getRoutineById(id) {
   try {
     const {
@@ -13,8 +11,6 @@ async function getRoutineById(id) {
     console.error(error);
   }
 }
-
-
 
 async function getRoutinesWithoutActivities() {
   

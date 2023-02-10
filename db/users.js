@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 
 // database functions
 
-
-
 async function createUser({ username, password }) {
   const SALT_COUNT = 10;
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
@@ -30,9 +28,6 @@ async function createUser({ username, password }) {
     throw error;
   }
 }
-
-
-
 
 async function getUser({ username, password }) {
   try {

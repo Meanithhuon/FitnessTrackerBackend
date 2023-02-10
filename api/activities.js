@@ -11,9 +11,9 @@ router.get("/:activityId/routines", async (req, res, next) => {
     const activity = await getActivityById(activityId);
     if (!activity) {
       return next({
-        name: ActivityNotFoundError,
-        message: "ActivityNotFoundError",
-        error: ActivityNotFoundError,
+        name: ActivityNotFoundError(activityId),
+        message: `Activity ${activityId} not found`,
+        error: ActivityNotFoundError(activityId),
       });
     }
     const publicRoutines = await getPublicRoutinesByActivity(activity);
@@ -24,19 +24,20 @@ router.get("/:activityId/routines", async (req, res, next) => {
 });
 
 
-
-
 // GET /api/activities
 
 router.get("/", async (req, res, next) => {
-    try {
-        const activities = await getAllActivities();
-        res.send(activities);
-    } catch (error) {
-        next(error);
-    }
-  });
-  
+  try {
+      const activities = await getAllActivities();
+      res.send(activities);
+  } catch (error) {
+      next({
+          name: "Error",
+          message: error.message,
+          error: error,
+      });
+  }
+});
 
 // POST /api/activities
 
@@ -48,9 +49,9 @@ router.post("/", requireUser, async (req, res, next) => {
     const existingActivity = await getActivityByName(name);
     if (existingActivity) {
       next({
-        name: ActivityExistsError,
+        name: ActivityExistsError(name),
         message: `An activity with name ${name} already exists`,
-        error: ActivityExistsError,
+        error: ActivityExistsError(name),
       });
     } else {
       newActivity.name = name;
@@ -74,8 +75,8 @@ router.patch("/:activityId", requireUser, async (req, res, next) => {
 
     if (!activity) {
       return next({
-        error: ActivityNotFoundError,
-        name: ActivityNotFoundError,
+        error: ActivityNotFoundError(id),
+        name: ActivityNotFoundError(id),
         message: `Activity ${id} not found`,
       });
     }
@@ -83,8 +84,8 @@ router.patch("/:activityId", requireUser, async (req, res, next) => {
     const activityWithSameName = await getActivityByName(name);
     if (activityWithSameName && activityWithSameName.id !== id) {
       return next({
-        error: ActivityExistsError,
-        name: ActivityExistsError,
+        error: ActivityExistsError(name),
+        name: ActivityExistsError(name),
         message: `An activity with name ${name} already exists`,
       });
     }
