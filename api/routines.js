@@ -22,7 +22,6 @@ router.get("/", async (req, res, next) => {
 
   router.post("/", requireUser, async (req, res, next) => {
     const { name, goal, isPublic } = req.body;
-  
     try {
       const newRoutine = await createRoutine({
         creatorId: req.user.id,
@@ -45,10 +44,6 @@ router.get("/", async (req, res, next) => {
     }
   });
   
-
-  
-
-
 // PATCH /api/routines/:routineId
 
 router.patch("/:routineId", requireUser, async (req, res, next) => {
@@ -73,7 +68,6 @@ router.patch("/:routineId", requireUser, async (req, res, next) => {
           error: UnauthorizedUpdateError (req.user.username, routine.name),
         });
       }
-  
       let updatedRoutine = { id, isPublic, name, goal };
       if (!name) {
         updatedRoutine.name = routine.name;
@@ -84,7 +78,6 @@ router.patch("/:routineId", requireUser, async (req, res, next) => {
       if (isPublic === undefined) {
         updatedRoutine.isPublic = routine.isPublic;
       }
-  
       const result = await updateRoutine(updatedRoutine);
       res.send(result);
     } catch (error) {
@@ -92,20 +85,11 @@ router.patch("/:routineId", requireUser, async (req, res, next) => {
     }
   });
 
-
-
-
-
-
-
-
 // DELETE /api/routines/:routineId
 
 router.delete("/:routineId", requireUser, async (req, res, next) => {
   try {
     const id = req.params.routineId;
-   
-
     const routine = await getRoutineById(id);
     if (routine.creatorId !== req.user.id) {
       res.status(403);
@@ -115,7 +99,6 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
       });
   
     }
-
     await destroyRoutine(id);
     res.send(routine);
   } catch ({ name, message }) {
@@ -127,13 +110,12 @@ router.post("/:routineId/activities", requireUser, async (req, res, next) => {
   try {
     const { routineId } = req.params;
     const { activityId, count, duration } = req.body;
-    console.log(req.body, "potato");
     const routine_activities = await getRoutineActivitiesByRoutine({
       id: routineId,
     });
     let alreadyFound = false;
-    routine_activities.forEach((r_a) => {
-      if (r_a.activityId == activityId) {
+    routine_activities.forEach((routine_activity) => {
+      if (routine_activity.activityId == activityId) {
         alreadyFound = true;
       }
     });
@@ -155,6 +137,7 @@ router.post("/:routineId/activities", requireUser, async (req, res, next) => {
     next(error);
   }
 });
+
 
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {getAllActivities, getActivityById,getPublicRoutinesByActivity,  getActivityByName, createActivity,  updateActivity} = require("../db");
+const {getAllActivities, getActivityById,getPublicRoutinesByActivity,  getActivityByName, createActivity,  
+  updateActivity} = require("../db");
 const { requireUser } = require("./utils");
 
 const{ActivityNotFoundError, ActivityExistsError, } = require ("../errors")
@@ -23,7 +24,6 @@ router.get("/:activityId/routines", async (req, res, next) => {
   }
 });
 
-
 // GET /api/activities
 
 router.get("/", async (req, res, next) => {
@@ -36,13 +36,12 @@ router.get("/", async (req, res, next) => {
           message: error.message,
           error: error,
       });
-  }
+   }
 });
 
 // POST /api/activities
 
 router.post("/", requireUser, async (req, res, next) => {
-  
   try {
     const { name, description } = req.body;
     const newActivity = {};
@@ -67,7 +66,6 @@ router.post("/", requireUser, async (req, res, next) => {
 // PATCH /api/activities/:activityId
 
 router.patch("/:activityId", requireUser, async (req, res, next) => {
-  
   try {
     const { name, description } = req.body;
     const id = req.params.activityId;

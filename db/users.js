@@ -21,7 +21,8 @@ async function createUser({ username, password }) {
     );
     return user;
   } catch (error) {
-    if (error.message.toLowerCase().includes("unique") || error.message.toLowerCase().includes("constraint") || error.message.toLowerCase().includes("failed")) {
+    if (error.message.toLowerCase().includes("unique") || error.message.toLowerCase().includes("constraint") 
+      || error.message.toLowerCase().includes("failed")) {
       throw new Error("Username already exists");
     }
     console.error(error);
@@ -49,39 +50,33 @@ async function getUser({ username, password }) {
   }
 }
 
-
-
 async function getUserById(userId) {
-  
   try{
-   const {rows:[user] } = await client.query(`
+   const {rows:[user] } = await client.query(
+   `
    SELECT id, username
    FROM users
    WHERE id=$1
    `,[userId]);
    return user;
-  }catch(error){
+  } catch(error){
    console.error(error);
    throw error;
    }
  }
  
-
  async function getUserByUsername(username) {
-  
   try{
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-      SELECT *
-      FROM users
-      WHERE username=$1;
+    const {rows: [user],} = await client.query(
+    `
+    SELECT *
+    FROM users
+    WHERE username=$1;
     `,
       [username]
     );
     return user;
-    }catch(error){
+    } catch(error){
       console.error(error);
       throw error;
       }

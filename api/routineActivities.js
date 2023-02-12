@@ -40,7 +40,6 @@ const {
           count,
           duration,
         });
-  
         // Send the updated routine activity to the client
         res.send(newRoutineActivity);
       }
@@ -73,6 +72,5 @@ router.delete("/:routineActivityId", requireUser, async (req, res, next) => {
       next({ name, message, error });
     }
   });
-  
 
 module.exports = router;

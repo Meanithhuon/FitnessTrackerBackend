@@ -17,14 +17,15 @@ async function addActivityToRoutine({routineId,activityId,count,duration,}) {
     console.error(error);
     throw error
   }
-
 }
 
 async function getRoutineActivityById(id) {
   try {
     const {
       rows: [routine_activity],
-    } = await client.query(`SELECT * FROM routine_activities WHERE id=$1;`, [
+    } = await client.query(
+      `SELECT * FROM routine_activities 
+      WHERE id=$1;`, [
       id,
     ]);
     return routine_activity;
@@ -33,7 +34,6 @@ async function getRoutineActivityById(id) {
     throw error
   }
   }
-
 
   async function updateRoutineActivity({ id, ...fields }) {
     const setValue = Object.keys(fields)
@@ -81,11 +81,13 @@ async function getRoutineActivityById(id) {
 
   async function getRoutineActivitiesByRoutine({ id }) {
     try {
-      const { rows } = await client.query(`
-        SELECT *
-        FROM routine_activities
-        WHERE "routineId"= ${id}
-      `);
+      const { rows } = await client.query(
+      `
+      SELECT *
+      FROM routine_activities
+      WHERE "routineId"= ${id}
+      `
+      );
       return rows;
     } catch (error) {
       console.error(error);
@@ -101,11 +103,9 @@ async function getRoutineActivityById(id) {
         ` SELECT * 
        FROM routine_activities 
        JOIN routines ON routine_activities."routineId" = routines.id
-       AND routine_activities.id =$1
-       
-       ;`,
-        [routineActivityId]
-      );
+       AND routine_activities.id =$1;\
+       `,[routineActivityId]
+       );
       return routine_activity.creatorId === userId;
     } catch (error) {
       console.error(error);

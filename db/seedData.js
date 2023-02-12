@@ -1,13 +1,11 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
 // const { } = require('./');
-const {createUser, createActivity,createRoutine,getAllActivities,getRoutinesWithoutActivities,addActivityToRoutine} = require('./');
+const {createUser, createActivity,createRoutine,getAllActivities,
+  getRoutinesWithoutActivities,addActivityToRoutine} = require('./');
 
 const client = require("./client");
 
-
   // drop all tables, in the correct order
-
-
 
 async function dropTables() {
   try {
@@ -61,15 +59,11 @@ async function createTables() {
   UNIQUE ("routineId", "activityId")
   );`);
 
-
-  }catch(error) {
+  } catch(error) {
     console.log("error")
     throw error;
   }
-  }
-  
-
-
+}
 
 /* 
 

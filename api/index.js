@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../db');
 const { JWT_SECRET } = process.env;
-
 
 router.use(async (req, res, next) => {
   const prefix = 'Bearer ';
@@ -16,10 +14,8 @@ router.use(async (req, res, next) => {
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
-
     try {
       const { id } = jwt.verify(token, JWT_SECRET);
-
       if (id) {
         req.user = await getUserById(id);
         next();
@@ -39,24 +35,20 @@ router.use((req, res, next) => {
   if (req.user) {
     console.log('User is set:', req.user);
   }
-
   next();
 });
 
 // GET /api/health
-
 
 router.get('/health', async (req, res, next) => {
     try {
       res.send({
         message: "I am healthy"
       });
-  
     } catch (error) {
       next(error);  
     }
   });
-
 
 // ROUTER: /api/users
 const usersRouter = require('./users');
@@ -77,13 +69,12 @@ router.use('/routine_activities', routineActivitiesRouter);
 router.use('*', (req, res, next) => {
   res.status(404)
   res.send({
-    message: "Not Found"
+    message: "The requested resource could not be found."
   })
-
 })
 
 router.use((error, req, res, next) => {
-if (error == 'Unauthorized'){
+if (error.name == 'Unauthorized'){
   res.status(401)
 }
   res.send({
@@ -113,12 +104,10 @@ router.use((err, req, res) => {
   res.status(500).send(error);
 });
 
-
 router.use((error, req, res, next) => {
   res.send(error);
 });
  
-
 module.exports = router;
 
 

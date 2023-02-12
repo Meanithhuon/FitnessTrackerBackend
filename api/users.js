@@ -2,14 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const {requireUser} = require("./utils");
-
 const jwt = require("jsonwebtoken");
-
 const{UserTakenError, PasswordTooShortError, UnauthorizedError} = require ("../errors")
-
 const {
   getUserByUsername, createUser, getUser, getPublicRoutinesByUser,getAllRoutinesByUser,
-
 } = require("../db");
 
 // POST /api/users/register
@@ -21,11 +17,9 @@ router.post("/register", async (req, res, next) => {
 
     if (_user) {
       next({
-
       message:`User ${username} is already taken.`,
       name: UserTakenError(username),
       error: UserTakenError(username),
-      
       });
     }
 
@@ -41,7 +35,6 @@ router.post("/register", async (req, res, next) => {
       username,
       password,
     });
-
     const token = jwt.sign(user, process.env.JWT_SECRET);
 
     res.send({
@@ -61,7 +54,6 @@ router.post("/register", async (req, res, next) => {
 // POST /api/users/login
 router.post("/login", async (req, res, next) => {
     const { username, password } = req.body;
-  
     if (!username || !password) {
       return next({
         name: "MissingUsernameOrPasswordError",
@@ -87,30 +79,6 @@ router.post("/login", async (req, res, next) => {
     }
   });
   
-
-
-// GET /api/users/me
-
-// router.get("/me", requireUser, async (req, res, next) => {
-//   try {
-//     if (req.user) {
-//       res.send(req.user);
-//     } 
-//   }
-//     next({
-//       name: UnauthorizedError,
-//       message:"UnauthorizedError",
-//       error:UnauthorizedError,
-
-
-//     });
-//   } catch (err) {
-//     //     console.log(err.message);
-//     //     next();
-
-//   })
-
-
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     if (req.user) {
@@ -118,18 +86,15 @@ router.get("/me", requireUser, async (req, res, next) => {
     } 
   } catch (err) {
     console.log(err.message);
-
     next({
-      error: UnauthorizedError,
-      name: UnauthorizedError,
+      error: UnauthorizedError(),
+      name: UnauthorizedError(),
       message: "You must be logged in to perform this action",
     });
   }
 });
 
-
 router.get("/:username/routines", async (req, res, next) => {
- 
   try{
     const {username} = req.params;
     const user = await getUserByUsername(username);
@@ -150,6 +115,5 @@ router.get("/:username/routines", async (req, res, next) => {
   }
 
 })
-
 
 module.exports = router;
